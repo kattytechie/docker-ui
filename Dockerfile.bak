@@ -1,0 +1,15 @@
+# Stage 1
+FROM node:14-alpine3.12 as build-step
+#RUN apk add --no-cache git
+RUN mkdir -p /app
+WORKDIR /app
+COPY ./ /app
+RUN npm install
+RUN npm run build
+
+
+# Stage 2
+FROM tomcat:10
+COPY --from=build-step /app/dist /usr/local/tomcat/webapps/scrum-ui
+EXPOSE 8080
+CMD ["catalina.sh", "run"]
